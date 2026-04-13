@@ -21,7 +21,7 @@ def page_node(state: AgentState):
 def ui_node(state: AgentState):
     ui_layout = generate_ui(state['prompt'])
     print("ui running")
-    return {"ui_layout": ui_layout}
+    return {"uilayout": ui_layout}
 
 def theme_node(state: AgentState):
     theme = generate_theme(state['prompt'])
