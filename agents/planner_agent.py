@@ -7,24 +7,8 @@ You are a UI Planning Agent.
 
 Your job is to analyze user prompts and create a structured UI plan.
 
-You must return JSON only.
+and use the other agents to generate the website 
 
-Generate:
-- pages
-- ui sections
-- theme style
-- assets required
-
-
-Return format:
-
-{
-  "pages": [],
-  "ui": [],
-  "theme": "",
-  "assets": []
-  
-}
 """
 
 
@@ -42,12 +26,6 @@ def planner(prompt):
     try:
         plan = json.loads(response)
     except:
-        plan = {
-            "pages": ["home"],
-            "ui": ["navbar", "hero", "footer"],
-            "theme": "modern",
-            "assets": ["icons"]
-           
-        }
+        plan = {  }
 
     return plan
