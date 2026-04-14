@@ -2,14 +2,14 @@ import json
 from ai_agentic_designer.agents.llm import llm
 
 
-def generate_assets(prompt, plan):
+def generate_assets(prompt):
 
     asset_prompt = f"""
     Generate UI assets for website.
 
     User Request:
     {prompt}
-    planner request:{plan}
+    
 
     Return JSON:
     {{

@@ -2,14 +2,14 @@ import json
 from ai_agentic_designer.agents.llm import llm
 
 
-def generate_pages(prompt, plan):
+def generate_pages(prompt):
 
   page_prompt = f"""
   
   Generate website pages based on the user request.
 
   user request: {prompt}
-  planner request:{plan}
+ 
 
 
   Return JSON:
