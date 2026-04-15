@@ -25,6 +25,11 @@ def planner(prompt):
     {prompt}
 
     Create UI plan.
+    Use this systematic approach to provide your response:
+    1. Break down the prompt into smaller steps
+    2. Address each step systematically
+    3. Show your reasoning for each step
+    4. Then provide your final conclusion
     """
 
     response = llm(planning_prompt, system_prompt=SYSTEM_PROMPT)
