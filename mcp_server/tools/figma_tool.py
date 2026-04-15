@@ -26,17 +26,6 @@ def get_figma_file():
     return response.json()
 
 
-@tool
-def create_figma_frame(name: str):
-    """
-    Create frame (placeholder logic)
-    """
-
-    return {
-        "status": "frame_created",
-        "name": name
-    }
-
 
 
 @tool
