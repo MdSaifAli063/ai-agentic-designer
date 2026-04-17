@@ -19,7 +19,7 @@ def generate_pages(prompt, plan):
   Do NOT return a single page.
 
   Use the pages list to create navigation links between pages.
-
+  
   Each page must include a navbar with links to all other pages.
 
   Use proper routes like:
