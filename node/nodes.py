@@ -30,7 +30,7 @@ def theme_node(state: AgentState):
     return {"theme": theme}
 
 def asset_node(state: AgentState):  
-    assets = generate_assets(state['theme'], state['plan'])
+    assets = generate_assets(state['plan'])
     print("assets running")
     return {"assets": assets}
 

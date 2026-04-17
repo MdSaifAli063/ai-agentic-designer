@@ -13,7 +13,10 @@ def generate_assets(prompt, plan):
     Planner Output:
     {json.dumps(plan, indent=2)}
     
-
+    STRICT RULES:
+    - Use assets from planner
+    - Do NOT add extra assets
+    
     Return JSON:
     {{
       "assets": ["hero image", "icons", "background"]

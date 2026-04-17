@@ -1,59 +1,59 @@
 import json
 from ai_agentic_designer.agents.llm import llm
+import re
 
 
 def generate_pages(prompt, plan):
 
   page_prompt = f"""
+    You are a professional website page generator.
 
-  you are a proffessional website page generated
-  based on the user request
-  
-  your task is as follows:
+    Your task:
+    Generate MULTIPLE website pages based on the user request and planner output.
 
-  
-  Generate website pages based on the user request.
-  Use the planner output pages list to generate ALL pages.
-  Generate content for each page.
+    User Request:
+    {prompt}
 
-  Do NOT return a single page.
+    Planner Output:
+    {json.dumps(plan, indent=2)}     
 
-  Use the pages list to create navigation links between pages.
-  
-  Each page must include a navbar with links to all other pages.
+    STRICT RULES:
+    - Use ALL pages from planner output
+    - Do NOT skip any page
+    - Do NOT add extra pages
+    - Generate content for EACH page
+    - Each page MUST include a navbar with links to ALL pages
+    - Use routes like /home, /about, /features, etc.
+    - Output MUST be valid JSON only
+    - Do NOT include explanations, text, or comments
 
-  Use proper routes like:
-  - /home
-  - /about
-  - /features
+    Return ONLY this format:
 
-  user request: {prompt}
-  Planner Output: {json.dumps(plan, indent=2)}
- 
-
-
-  Return JSON:
-  {{
-    "pages": [
-      {{
-        "name": "home",
-        "content": "..."
-      }},
-      {{
-        "name": "about", 
-        "content": "..."
-      }}
-      ...
-    ]
-  }}
-  """
+    {{
+      "pages": [
+        {{
+          "name": "home",
+          "content": "<html content>"
+        }}
+      ]
+    }}
+    """
 
   response = llm(page_prompt)
 
   try:
-    pages = json.loads(response)
+    match = re.search(r'\{.*\}', response, re.DOTALL)
+    if match:
+        pages = json.loads(match.group())
+    else:
+        raise ValueError("No JSON found")
   except:
-    pages = {"pages":["home"]}
+      pages = {
+          "pages": [
+              {"name": p, "content": f"<div>{p} page</div>"}
+              for p in plan.get("pages", ["home"])
+          ]
+      }
 
 
   return pages 

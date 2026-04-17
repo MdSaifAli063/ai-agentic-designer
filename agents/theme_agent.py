@@ -12,6 +12,10 @@ def generate_theme(prompt, plan):
    
     Planner Output:
     {json.dumps(plan, indent=2)}
+    
+    STRICT RULES:
+    - Style must match planner style
+    - Return ONLY JSON
 
     Return JSON:
     {{
