@@ -1,57 +1,63 @@
 import json
-
 from ai_agentic_designer.agents.llm import llm
-from ai_agentic_designer.agents.site_spec import compose_site_pages, extract_json_object
+import re
 
 
-SYSTEM_PROMPT = """
-You are the page composition agent for a multi-page website design system.
+def generate_pages(prompt, plan):
 
-Return only valid JSON with this shape:
-{
-  "pages": [
-    {
-      "name": "home",
-      "sections": [
-        {
-          "section_type": "hero",
-          "variant": "split-visual",
-          "purpose": "Introduce the offer",
-          "content_brief": {
-            "headline": "string",
-            "supporting_text": "string"
-          }
-        }
+  page_prompt = f"""
+    You are a professional website page generator.
+
+    Your task:
+    Generate MULTIPLE website pages based on the user request and planner output.
+
+    User Request:
+    {prompt}
+
+    Planner Output:
+    {json.dumps(plan, indent=2)}     
+
+    STRICT RULES:
+    - Use ALL pages from planner output
+    - Do NOT skip any page
+    - Do NOT add extra pages
+    - Generate content for EACH page
+    - Each page MUST include a navbar with links to ALL pages
+    - Use routes like /home, /about, /features, etc.
+    - Output MUST be valid JSON only
+    - Do NOT include explanations, text, or comments
+
+    Return ONLY valid JSON.
+      Do NOT include markdown, explanations, or text.
+
+    Return ONLY this format:
+
+    {{
+      "pages": [
+        {{
+          "name": "home",
+          "content": "<html content>"
+        }}
       ]
-    }
-  ]
-}
+    }}
+    """
 
-Rules:
-- Use only these section types: navbar, hero, logo_cloud, stats_strip, feature_grid, feature_split, testimonial_grid, pricing_tiers, faq, cta, footer.
-- Never return HTML.
-- Navbar and footer can appear in the page section order, but their content_brief should be empty.
-- Hero must appear on home.
-- Pricing tiers may appear only on home or pricing.
-- Keep the site desktop-focused and marketing-oriented.
-"""
+  response = llm(page_prompt)
+  print("RAW LLM RESPONSE:", response)
+
+  try:
+    match = re.search(r'\{.*\}', response, re.DOTALL)
+    if match:
+        pages = json.loads(match.group())
+    else:
+        raise ValueError("No JSON found")
+  except:
+      pages = {
+          "pages": [
+              {"name": p, "content": f"<div>{p} page</div>"}
+              for p in plan.get("pages", ["home"])
+          ]
+      }
 
 
-def generate_pages(site_spec: dict) -> dict:
-    page_prompt = f"""
-Project:
-{json.dumps(site_spec["project"], indent=2)}
-
-Pages:
-{json.dumps(site_spec["pages"], indent=2)}
-
-Component library:
-{json.dumps(site_spec["component_library"], indent=2)}
-
-Compose structured sections for each page.
-Return JSON only.
-"""
-
-    response = llm(page_prompt, system_prompt=SYSTEM_PROMPT)
-    page_payload = extract_json_object(response)
-    return compose_site_pages(site_spec, page_payload)
+  return pages 
