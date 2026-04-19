@@ -4,4 +4,3 @@ pydantic
 langchain 
 langgraph
 requests
-python-dotenv
