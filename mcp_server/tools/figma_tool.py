@@ -1,65 +1,51 @@
 import os
-import requests
+import asyncio
 from dotenv import load_dotenv
-from langchain.tools import tool
+from langchain_mcp_adapters.client import MultiServerMCPClient
 
 load_dotenv()
 
 FIGMA_API_KEY = os.getenv("FIGMA_API_KEY")
-FIGMA_FILE_KEY = os.getenv("FIGMA_FILE_KEY")
+FIGMA_FILE_KEY = os.getenv("FIGMA_FILE_KEY")  # ← load from .env
 
+async def get_remote_figma_tools():
+    if not FIGMA_API_KEY:
+        raise ValueError("FIGMA_API_KEY is not set in .env")
+    if not FIGMA_FILE_KEY:
+        raise ValueError("FIGMA_FILE_KEY is not set in .env")
 
-@tool
-def get_figma_file():
-    """
-    Get figma file content
-    """
+    client = MultiServerMCPClient({
+        "figma": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "figma-developer-mcp",
+                f"--figma-api-key={FIGMA_API_KEY}",
+                "--stdio"
+            ],
+            "transport": "stdio",
+        }
+    })
 
-    url = f"https://api.figma.com/v1/files/{FIGMA_FILE_KEY}"
-
-    headers = {
-        "X-Figma-Token": FIGMA_API_KEY
-    }
-
-    response = requests.get(url, headers=headers)
-
-    return response.json()
-
-
-@tool
-def create_figma_frame(name: str):
-    """
-    Create frame (placeholder logic)
-    """
+    tools = await client.get_tools()
 
     return {
-        "status": "frame_created",
-        "name": name
+        "client": client,
+        "tools": tools,
     }
 
 
+if __name__ == "__main__":
+    async def main():
+        result = await get_remote_figma_tools()
+        tools = result["tools"]
 
-@tool
-def create_ui_frames(layout: list):
-    """
-    Create UI frames in figma
-    """
+        get_data_tool = next(t for t in tools if t.name == "get_figma_data")
 
-    frames = []
-
-    y_position = 0
-
-    for component in layout:
-        frames.append({
-            "name": component,
-            "x": 0,
-            "y": y_position,
-            "width": 1440,
-            "height": 200
+        response = await get_data_tool.ainvoke({
+            "fileKey": FIGMA_FILE_KEY,
         })
 
-        y_position += 220
+        print(response)
 
-    return {
-        "frames": frames
-    }
+    asyncio.run(main())
