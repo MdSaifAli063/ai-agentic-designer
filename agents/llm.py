@@ -1,32 +1,24 @@
-import json
-
 import requests
+import json
 
 SYSTEM_PROMPT = """
 You are an AI UI/UX design system that helps generate structured outputs
 for building websites using multi-agent architecture.
 """
 
-def llm(prompt, system_prompt=None):
+def llm(prompt, SYSTEM_PROMPT=True):
 
     url = "http://localhost:11434/api/generate"
 
     payload = {
         "model": "qwen3:8b",
         "prompt": prompt,
-        "system": system_prompt or SYSTEM_PROMPT,
+        "system": SYSTEM_PROMPT,
         "stream": False,
     }
 
-    try:
-        response = requests.post(url, json=payload, timeout=45)
-        response.raise_for_status()
-    except requests.RequestException:
-        return ""
+    response = requests.post(url, json=payload)
 
-    try:
-        data = response.json()
-    except json.JSONDecodeError:
-        return ""
+    data = response.json()
 
     return data.get("response", "")
