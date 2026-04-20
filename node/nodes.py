@@ -4,7 +4,6 @@ from ai_agentic_designer.agents.ui_agent import generate_ui
 from ai_agentic_designer.agents.asset_agent import generate_assets
 from ai_agentic_designer.agents.planner_agent import planner
 from ai_agentic_designer.agents.state import AgentState
-from ai_agentic_designer.mcp_server.tools.figma_tool import create_ui_frames
 
 
 
