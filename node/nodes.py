@@ -1,7 +1,6 @@
 from ai_agentic_designer.agents.page_agent import generate_pages
 from ai_agentic_designer.agents.theme_agent import generate_theme
 from ai_agentic_designer.agents.ui_agent import generate_ui
-from ai_agentic_designer.agents.asset_agent import generate_assets
 from ai_agentic_designer.agents.planner_agent import planner
 from ai_agentic_designer.agents.state import AgentState
 
@@ -28,10 +27,6 @@ def theme_node(state: AgentState):
     print("theme running")
     return {"theme": theme}
 
-def asset_node(state: AgentState):  
-    assets = generate_assets(state['theme'],state['plan'])
-    print("assets running")
-    return {"assets": assets}
 
 
 
