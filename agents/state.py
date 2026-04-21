@@ -5,6 +5,6 @@ class AgentState(TypedDict):
   prompt: str
   pages: dict
   ui: dict
-  theme: dict
+  design: dict
   plan: dict
 
