@@ -22,7 +22,7 @@ def ui_node(state: AgentState):
     print("ui running")
     return {"ui": ui_layout}
 
-def theme_node(state: AgentState):
+def design_node(state: AgentState):
     theme = generate_theme(state["ui"], state['plan'])
     print("theme running")
     return {"theme": theme}
