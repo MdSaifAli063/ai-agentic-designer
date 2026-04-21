@@ -120,7 +120,7 @@ Rules:
 """
 
     response = llm(page_prompt, SYSTEM_PROMPT=PAGE_SYSTEM_PROMPT)
-    print("RAW LLM RESPONSE:", response)
+    # print("RAW LLM RESPONSE:", response)
 
     try:
         match = re.search(r'\{[\s\S]*\}', response)
@@ -135,16 +135,16 @@ Rules:
 
 
 
-plan = {
-    'pages': {'marketing_pages': ['Home', 'About Us', 'Services', 'Testimonials', 'Blog'], 'product_pages': ['Practice Areas', 'Legal Guides', 'Case Studies'], 'support_pages': ['Contact Us', 'FAQ', 'Privacy Policy', 'Terms of Service']},
-    "style": "modern ai saas",
-    "layout": {},
-    "assets": []
-  }
-prompt = "law firm"
+# plan = {
+#     'pages': {'marketing_pages': ['Home', 'About Us', 'Services', 'Testimonials', 'Blog'], 'product_pages': ['Practice Areas', 'Legal Guides', 'Case Studies'], 'support_pages': ['Contact Us', 'FAQ', 'Privacy Policy', 'Terms of Service']},
+#     "style": "modern ai saas",
+#     "layout": {},
+#     "assets": []
+#   }
+# prompt = "law firm"
 
-l = generate_pages(prompt=prompt, plan=plan )
-print(f"ai output:{l}")
+# l = generate_pages(prompt=prompt, plan=plan )
+# print(f"ai output:{l}")
 
 
 
