@@ -168,4 +168,4 @@ plan = {
 
 l = generate_design(prompt=prompt, plan=plan)
 
-print(f"{json.dumps(l, indent=2)}")
+print(f" AI OUTPUT {json.dumps(l, indent=2)}")
