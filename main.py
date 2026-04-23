@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from agents.planner_agent import planner
+from ai_agentic_designer.agents.graphs import run_graph
 
 app = FastAPI()
 
@@ -18,7 +18,7 @@ def root():
 @app.post("/generate")
 def generate(request: PromptRequest):
 
-    result = planner(request.prompt)
+    result = run_graph(request.prompt)
 
     return {
         "result": result
