@@ -119,53 +119,53 @@ Rules:
     return design
 
 
-prompt = "Create a futuristic AI SaaS platform website for startups with premium dark mode, multiple pages, dashboard feel, smooth animations, and modern trust-building design"
+# prompt = "Create a futuristic AI SaaS platform website for startups with premium dark mode, multiple pages, dashboard feel, smooth animations, and modern trust-building design"
 
-plan = {
-    "pages": {
-        "marketing_pages": [
-            "home",
-            "features",
-            "pricing",
-            "about",
-            "contact"
-        ],
-        "product_pages": [
-            "dashboard",
-            "analytics",
-            "settings"
-        ],
-        "support_pages": [
-            "faq",
-            "privacy_policy",
-            "terms_of_service"
-        ]
-    },
-    "style": "futuristic premium modern dark",
-    "layout": {
-        "landing": [
-            "navbar",
-            "hero",
-            "features_grid",
-            "pricing_preview",
-            "testimonial_strip",
-            "footer"
-        ],
-        "dashboard": [
-            "sidebar",
-            "topbar",
-            "stats_cards",
-            "charts",
-            "activity_feed"
-        ]
-    },
-    "assets": [
-        "3d_dashboard_mockup",
-        "gradient_backgrounds",
-        "modern_icons"
-    ]
-}
+# plan = {
+#     "pages": {
+#         "marketing_pages": [
+#             "home",
+#             "features",
+#             "pricing",
+#             "about",
+#             "contact"
+#         ],
+#         "product_pages": [
+#             "dashboard",
+#             "analytics",
+#             "settings"
+#         ],
+#         "support_pages": [
+#             "faq",
+#             "privacy_policy",
+#             "terms_of_service"
+#         ]
+#     },
+#     "style": "futuristic premium modern dark",
+#     "layout": {
+#         "landing": [
+#             "navbar",
+#             "hero",
+#             "features_grid",
+#             "pricing_preview",
+#             "testimonial_strip",
+#             "footer"
+#         ],
+#         "dashboard": [
+#             "sidebar",
+#             "topbar",
+#             "stats_cards",
+#             "charts",
+#             "activity_feed"
+#         ]
+#     },
+#     "assets": [
+#         "3d_dashboard_mockup",
+#         "gradient_backgrounds",
+#         "modern_icons"
+#     ]
+# }
 
-l = generate_design(prompt=prompt, plan=plan)
+# l = generate_design(prompt=prompt, plan=plan)
 
-print(f" AI OUTPUT {json.dumps(l, indent=2)}")
+# print(f" AI OUTPUT {json.dumps(l, indent=2)}")
