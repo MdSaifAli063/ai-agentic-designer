@@ -29,16 +29,16 @@ def create_agent_graph():
 
 
 
-def main():
+def run_graph(prompt):
   graph = create_agent_graph()
   final_state = graph.invoke(
-      {"prompt": "Create AI startup website"},
+      {"prompt": prompt},
       config={"recursion_limit": 100}
   )
-  print(final_state)
+  return final_state
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 
 
