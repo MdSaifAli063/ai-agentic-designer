@@ -1,11 +1,13 @@
 import requests
 
 
+
+
 def llm(prompt, SYSTEM_PROMPT=None):
     url = "http://localhost:11434/api/generate"
 
     payload = {
-        "model": "llama3:latest ",
+        "model": "qwen3:8b",
         "prompt": prompt,
         "system": SYSTEM_PROMPT or "",
         "stream": False,
