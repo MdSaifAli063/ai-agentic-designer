@@ -19,9 +19,9 @@ def create_agent_graph():
 
   workflow.set_entry_point("plan")
 
-  workflow.add_edge("plan", "page")
-  workflow.add_edge("page", "design")
-  workflow.add_edge("design", "ui")
+  workflow.add_edge("plan", "design")  # not page
+  workflow.add_edge("design", "page")  # not design
+  workflow.add_edge("page", "ui")
   workflow.add_edge("ui","code")
 
   workflow.set_finish_point("code")
