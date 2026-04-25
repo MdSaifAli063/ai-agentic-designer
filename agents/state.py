@@ -8,6 +8,7 @@ class AgentState(TypedDict):
   design: dict
   plan: dict
   code: dict
+  files: dict
 
   
 
