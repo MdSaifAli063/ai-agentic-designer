@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-
+import time
 load_dotenv()
 
 
@@ -51,7 +51,13 @@ def llm_groq(prompt, SYSTEM_PROMPT=None):
     data = response.json()
     
     if "choices" not in data:
-        print("Groq error:", data)
-        raise Exception(f"Groq error: {data}")
-    
+        if data.get("error", {}).get("code") == "rate_limit_exceeded":
+            print("Rate limit hit, waiting 40 seconds...")
+            time.sleep(40)  # wait and retry once
+            response = requests.post(url, headers=headers, json=payload)
+            data = response.json()
+        else:
+            print("Groq error:", data)
+            raise Exception(f"Groq error: {data}")
+
     return data["choices"][0]["message"]["content"]
