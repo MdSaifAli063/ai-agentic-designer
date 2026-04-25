@@ -1,7 +1,6 @@
 import json
-from ai_agentic_designer.agents.llm import llm
 import re
-
+from ai_agentic_designer.agents.llm import llm
 
 
 PAGE_SYSTEM_PROMPT = """
@@ -21,25 +20,29 @@ Rules:
 - No markdown
 - No explanations
 - Use snake_case names
-- Use ALL planner pages
 - Do not invent random pages
 - Sections must match page purpose
+- Keep output concise
 """
 
 
 def generate_pages(prompt, plan):
-    # flatten planner pages into one ordered list
-    # NEW FLEXIBLE PAGE FLATTENING LOGIC
+    """
+    Converts planner output into structured pages JSON
+    """
 
+    # -----------------------------
+    # Load page groups safely
+    # -----------------------------
     pages_data = plan.get("page_groups", {})
 
-    # fallback for old schema support
+    # fallback older schema
     if not pages_data:
         pages_data = plan.get("pages", {})
 
-    ordered_pages = []
-
-    # preferred category order if present
+    # -----------------------------
+    # Preferred ordering
+    # -----------------------------
     priority_order = [
         "marketing_pages",
         "service_pages",
@@ -53,33 +56,64 @@ def generate_pages(prompt, plan):
         "legal_pages"
     ]
 
-    # first add known priority groups
+    ordered_pages = []
+
+    # known groups first
     for group in priority_order:
         if group in pages_data:
             ordered_pages.extend(pages_data[group])
 
-    # then add any remaining dynamic groups
+    # dynamic groups later
     for group, page_list in pages_data.items():
         if group not in priority_order:
             ordered_pages.extend(page_list)
 
-    # normalize + remove duplicates
+    # -----------------------------
+    # Normalize + dedupe
+    # -----------------------------
     seen = set()
     final_pages = []
 
     for p in ordered_pages:
-        page = p.lower().replace(" ", "_").replace("-", "_")
+        page = str(p).lower().replace(" ", "_").replace("-", "_").strip()
 
-        if page not in seen:
+        if page and page not in seen:
             seen.add(page)
             final_pages.append(page)
 
+    # -----------------------------
+    # Limit for speed / MVP
+    # -----------------------------
+    final_pages = final_pages[:8]
+
+    # fallback pages if planner empty
+    if not final_pages:
+        final_pages = [
+            "home",
+            "about",
+            "services",
+            "pricing",
+            "contact"
+        ]
+
+    # -----------------------------
+    # Compact planner context
+    # -----------------------------
+    planner_context = {
+        "style": plan.get("style", ""),
+        "layout": plan.get("layout", {}),
+        "assets": plan.get("assets", [])
+    }
+
+    # -----------------------------
+    # LLM Prompt
+    # -----------------------------
     page_prompt = f"""
 User Request:
 {prompt}
 
-Planner Output:
-{json.dumps(plan, indent=2)}
+Planner Context:
+{json.dumps(planner_context, indent=2)}
 
 Required Pages:
 {json.dumps(final_pages)}
@@ -89,7 +123,7 @@ Return ONLY valid JSON in this format:
 {{
   "pages": [
     {{
-      "name": "landing",
+      "name": "home",
       "route": "/",
       "type": "marketing",
       "goal": "convert visitors",
@@ -106,21 +140,18 @@ Return ONLY valid JSON in this format:
 
 Rules:
 - Use ALL required pages
-- Do not skip pages
 - Do not add extra pages
-- landing/home route = /
+- home or landing route = /
 - other routes = /page_name
-- marketing pages = public conversion pages
-- product pages = dashboard/app pages
-- support pages = help/legal/contact pages
-- sections must fit page purpose
-- valid JSON only
-- Every page must include navbar + footer unless dashboard/app page
-- Dashboard pages use sidebar + topbar
+- Every page max 5 sections
+- Marketing pages = navbar + hero + content + footer
+- Support pages = navbar + content + footer
+- Dashboard/App pages = sidebar + topbar + content
+- Legal pages = navbar + policy_content + footer
+- Valid JSON only
 """
 
     response = llm(page_prompt, SYSTEM_PROMPT=PAGE_SYSTEM_PROMPT)
-    # print("RAW LLM RESPONSE:", response)
 
     try:
         match = re.search(r'\{[\s\S]*\}', response)
@@ -132,19 +163,6 @@ Rules:
     except Exception as e:
       raise ValueError(f"Failed to parse page agent JSON output: {str(e)}")
     return pages
-
-
-
-# plan = {
-#     'pages': {'marketing_pages': ['Home', 'About Us', 'Services', 'Testimonials', 'Blog'], 'product_pages': ['Practice Areas', 'Legal Guides', 'Case Studies'], 'support_pages': ['Contact Us', 'FAQ', 'Privacy Policy', 'Terms of Service']},
-#     "style": "modern ai saas",
-#     "layout": {},
-#     "assets": []
-#   }
-# prompt = "law firm"
-
-# l = generate_pages(prompt=prompt, plan=plan )
-# print(f"ai output:{l}")
 
 
 
