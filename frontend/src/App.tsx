@@ -1,7 +1,12 @@
+import ChatPanel from "./Components/ChatPanel"
+import PriviewPanel from "./Components/PreviewPanel"
+
+
 export default function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-5xl font-bold">
-      Linear gradient
+    <div className="flex h-screen bg-[#0f0f1a]">
+        <PriviewPanel />
+        <ChatPanel />
     </div>
   )
 }
