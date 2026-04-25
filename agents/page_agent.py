@@ -1,6 +1,6 @@
 import json
 import re
-from ai_agentic_designer.agents.llm import llm
+from ai_agentic_designer.agents.llm import llm_groq
 
 
 PAGE_SYSTEM_PROMPT = """
@@ -151,7 +151,7 @@ Rules:
 - Valid JSON only
 """
 
-    response = llm(page_prompt, SYSTEM_PROMPT=PAGE_SYSTEM_PROMPT)
+    response = llm_groq(page_prompt, SYSTEM_PROMPT=PAGE_SYSTEM_PROMPT)
 
     try:
         match = re.search(r'\{[\s\S]*\}', response)
