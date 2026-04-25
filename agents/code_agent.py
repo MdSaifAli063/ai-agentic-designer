@@ -1,6 +1,6 @@
 import json
 import re
-from ai_agentic_designer.agents.llm import llm_gemini
+from ai_agentic_designer.agents.llm import llm_groq
 
 
 SYSTEM_PROMPT = """
@@ -83,7 +83,7 @@ Requirements:
 - Return JSX only
 """
 
-        response = llm_gemini(code_prompt, SYSTEM_PROMPT=SYSTEM_PROMPT)
+        response = llm_groq(code_prompt, SYSTEM_PROMPT=SYSTEM_PROMPT)
 
         # remove markdown fences if model adds them
         response = re.sub(r"```jsx|```javascript|```js|```", "", response).strip()
