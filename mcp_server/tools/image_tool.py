@@ -6,7 +6,7 @@ from langchain.tools import tool
 
 @tool
 def image_generation(prompt: str):
-
+pass
   pass
 
 
