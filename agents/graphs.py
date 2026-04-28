@@ -5,7 +5,7 @@ from ai_agentic_designer.node.nodes import code_node, planner_node
 
 
 def create_agent_graph():
-    workflow = StateGraph(AgentState
+    workflow = StateGraph(AgentState)
 
     workflow.add_node("plan", planner_node)
     workflow.add_node("code", code_node)
