@@ -1,8 +1,8 @@
 import logging
 
-from ai_agentic_designer.agents.code_agent import generate_code
-from ai_agentic_designer.agents.planner_agent import planner
-from ai_agentic_designer.agents.state import AgentState
+from agents.code_agent import generate_code
+from agents.planner_agent import planner
+from agents.state import AgentState
 
 
 logger = logging.getLogger(__name__)
