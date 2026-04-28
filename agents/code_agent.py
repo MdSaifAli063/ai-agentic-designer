@@ -3,7 +3,7 @@ import json
 import logging
 import re
 
-from ai_agentic_designer.agents.llm import CODE_MODEL, invoke_text_model_async
+from agents.llm import CODE_MODEL, invoke_text_model_async
 
 
 logger = logging.getLogger(__name__)
