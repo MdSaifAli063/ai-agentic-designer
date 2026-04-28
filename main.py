@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from ai_agentic_designer.agents.graphs import run_graph
+from agents.graphs import run_graph
 
 
 logging.basicConfig(
