@@ -69,8 +69,6 @@ Agents collaborate to generate UI.
 This project is designed to use **MCP (Model Context Protocol)** for tool integration.
 
 Future MCP Tools:
-
-* Figma MCP
 * Image Generation MCP
 * Animation MCP
 * Playwright MCP
@@ -80,14 +78,6 @@ Architecture:
 
 ```
 Agents → MCP Tools → Output
-```
-
-Example:
-
-```
-UI Agent → Figma MCP
-Asset Agent → Image MCP
-Animation Agent → Video MCP
 ```
 
 ---
