@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
 body {
+  overflow: hidden;
+  background: #101114;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+pre {
   margin: 0;
 }

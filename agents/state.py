@@ -1,15 +1,12 @@
 from typing import TypedDict
 
 
-class AgentState(TypedDict):
-  prompt: str
-  pages: dict
-  ui: dict
-  design: dict
-  plan: dict
-  files: dict
-
-  
-
-
-
+class AgentState(TypedDict, total=False):
+    prompt: str
+    plan: dict
+    design: dict
+    pages: dict
+    ui: dict
+    files: dict
+    current_agent: str
+    errors: list[str]

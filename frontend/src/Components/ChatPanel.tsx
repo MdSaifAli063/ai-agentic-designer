@@ -1,93 +1,139 @@
 import { useState } from "react"
+import type { GeneratedFiles, GenerationMeta } from "../App"
 
 interface Message {
-  role: string
+  id: string
+  role: "user" | "system" | "error"
   text: string
 }
 
 interface Props {
-  setFiles: (files: Record<string, string>) => void
+  meta: GenerationMeta
+  onGenerated: (files: GeneratedFiles, prompt: string) => void
 }
 
-export default function ChatPanel({ setFiles }: Props) {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [input, setInput] = useState("")
+function createMessage(role: Message["role"], text: string): Message {
+  return {
+    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    role,
+    text
+  }
+}
+
+export default function ChatPanel({ meta, onGenerated }: Props) {
+  const [messages, setMessages] = useState<Message[]>([
+    createMessage("system", "Backend ready. Submit a prompt to generate a website.")
+  ])
+  const [input, setInput] = useState("Create futuristic AI startup website")
   const [loading, setLoading] = useState(false)
 
   const handleSend = async () => {
-    if (!input.trim()) return
+    const prompt = input.trim()
+    if (!prompt || loading) return
 
-    // 1. Add user message
-    setMessages(prev => [...prev, { role: "user", text: input }])
     setLoading(true)
-
-    // 2. Add generating message
-    setMessages(prev => [...prev, { role: "ai", text: "Generating your website..." }])
+    setMessages((prev) => [
+      ...prev,
+      createMessage("user", prompt),
+      createMessage("system", "Generation started. Waiting for backend response.")
+    ])
 
     try {
-      // 3. Call FastAPI
-      const response = await fetch("http://localhost:8000/generate", {
+      const response = await fetch("/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: input })
+        body: JSON.stringify({ prompt })
       })
 
       const data = await response.json()
 
-      // 4. Pass files to PreviewPanel
-      setFiles(data.result.files)
+      if (!response.ok) {
+        throw new Error(data?.detail || "Generation failed")
+      }
 
-      // 5. Done message
-      setMessages(prev => [...prev, { role: "ai", text: "Done! Your website is ready." }])
+      const files = data?.result?.files || {}
+      console.info("[frontend] generated files", Object.keys(files))
+      onGenerated(files, prompt)
 
+      setMessages((prev) => [
+        ...prev,
+        createMessage(
+          "system",
+          `Generation completed. Received ${Object.keys(files).length} files.`
+        )
+      ])
     } catch (error) {
-      setMessages(prev => [...prev, { role: "ai", text: "Something went wrong." }])
+      const message = error instanceof Error ? error.message : "Unknown error"
+      setMessages((prev) => [...prev, createMessage("error", message)])
     } finally {
       setLoading(false)
-      setInput("")
     }
   }
 
   return (
-    <div className="flex flex-col h-screen w-[30%] min-w-[300px] border-r border-white/10">
-
-      <div className="p-4 border-b border-white/10 text-white font-bold">
-        AI UI Designer
+    <aside className="flex min-h-0 flex-col border-r border-[#2a2c31] bg-[#16171b] max-lg:border-b max-lg:border-r-0">
+      <div className="border-b border-[#2a2c31] px-5 py-4">
+        <div className="text-sm uppercase tracking-[0.18em] text-[#d3ff72]">Agentic UI</div>
+        <h1 className="mt-2 text-xl font-semibold text-[#f8f4ea]">Website Generator</h1>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`px-4 py-2 rounded-lg text-sm max-w-[85%] ${
-              msg.role === "user"
-                ? "bg-violet-600 text-white self-end"
-                : "bg-white/10 text-white self-start"
-            }`}
-          >
-            {msg.text}
-          </div>
-        ))}
+      <div className="grid grid-cols-3 border-b border-[#2a2c31] text-sm">
+        <div className="px-4 py-3">
+          <div className="text-[#8f969f]">Files</div>
+          <div className="mt-1 font-semibold">{meta.fileCount}</div>
+        </div>
+        <div className="border-x border-[#2a2c31] px-4 py-3">
+          <div className="text-[#8f969f]">Pages</div>
+          <div className="mt-1 font-semibold">{meta.pageCount}</div>
+        </div>
+        <div className="px-4 py-3">
+          <div className="text-[#8f969f]">Status</div>
+          <div className="mt-1 font-semibold">{loading ? "Running" : "Idle"}</div>
+        </div>
       </div>
 
-      <div className="p-4 border-t border-white/10 flex gap-2">
-        <input
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex flex-col gap-3">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={[
+                "rounded-md border px-3 py-2 text-sm leading-6",
+                message.role === "user"
+                  ? "ml-6 border-[#d3ff72]/30 bg-[#d3ff72]/10 text-[#f6ffd8]"
+                  : "",
+                message.role === "system"
+                  ? "mr-6 border-[#3b3f46] bg-[#202227] text-[#d8dce0]"
+                  : "",
+                message.role === "error"
+                  ? "mr-6 border-[#ff6b6b]/40 bg-[#ff6b6b]/10 text-[#ffd0d0]"
+                  : ""
+              ].join(" ")}
+            >
+              {message.text}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-[#2a2c31] p-4">
+        <textarea
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onChange={(event) => setInput(event.target.value)}
           disabled={loading}
-          className="flex-1 bg-white/5 text-white rounded-lg px-4 py-2 outline-none"
-          placeholder="Describe your website..."
+          rows={4}
+          className="h-28 w-full resize-none rounded-md border border-[#30333a] bg-[#0f1013] px-3 py-3 text-sm leading-6 text-[#f8f4ea] outline-none transition focus:border-[#d3ff72]/70 disabled:opacity-60"
+          placeholder="Describe the website to generate"
         />
         <button
+          type="button"
           onClick={handleSend}
-          disabled={loading}
-          className="bg-violet-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+          disabled={loading || !input.trim()}
+          className="mt-3 w-full rounded-md bg-[#d3ff72] px-4 py-3 text-sm font-semibold text-[#12140f] transition hover:bg-[#e0ff94] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "..." : "Send"}
+          {loading ? "Generating..." : "Generate Website"}
         </button>
       </div>
-
-    </div>
+    </aside>
   )
 }
