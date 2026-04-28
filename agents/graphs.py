@@ -14,7 +14,7 @@ def create_agent_graph():
     workflow.add_edge("plan", "code")
     workflow.set_finish_point("code")
 
-    return workflow.compile
+    return workflow.compile()
 
 
 def run_graph(prompt: str):
